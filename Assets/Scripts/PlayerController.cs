@@ -9,6 +9,8 @@ public class PlayerController : MonoBehaviour
     [SerializeField] private float jumpForce;
     private bool canJump;
 
+    [SerializeField] private AudioSource source;
+
     private void Awake()
     {
         rb = GetComponent<Rigidbody>();
@@ -30,6 +32,7 @@ public class PlayerController : MonoBehaviour
 
     private void Jump()
     {
+        source.Play();
         rb.AddForce(Vector3.up * jumpForce, ForceMode.Impulse);
     }
 

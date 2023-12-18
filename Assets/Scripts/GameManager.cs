@@ -7,15 +7,21 @@ public class GameManager : MonoBehaviour
 {
     [SerializeField] private GameObject obstacle;
     [SerializeField] private Transform spawnPoint;
+
     int score = 0;
+    private int highScore;
+
     [SerializeField] private TextMeshProUGUI scoreText;
+    [SerializeField] private TextMeshProUGUI highScoreText;
+
     [SerializeField] private GameObject playButton;
     [SerializeField] private GameObject player;
 
     
     void Start()
     {
-        
+        highScore = PlayerPrefs.GetInt("HighScore", 0);
+        UpdateHighScoreText();
     }
 
     
@@ -26,14 +32,20 @@ public class GameManager : MonoBehaviour
 
     IEnumerator SpawnObstacles()
     {
+        
         while (true)
         {
-            float waitTime = Random.Range(0.6f, 2);
-
+            float waitTime = CalculateWaitTime();
+            
             yield return new WaitForSeconds(waitTime);
 
             Instantiate(obstacle, spawnPoint.position, Quaternion.identity);
         }
+    }
+    float CalculateWaitTime()
+    {
+        
+        return Mathf.Max(2.0f - 0.1f * score/4, 0.9f);
     }
 
     public void GameStart()
@@ -49,5 +61,16 @@ public class GameManager : MonoBehaviour
     {
         score++;
         scoreText.text = score.ToString();
+        if (score > highScore)
+        {
+            highScore = score;
+            PlayerPrefs.SetInt("HighScore", highScore);
+            UpdateHighScoreText();
+        }
+    }
+
+    void UpdateHighScoreText()
+    {
+        highScoreText.text = "High Score: " + highScore;
     }
 }
